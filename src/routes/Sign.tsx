@@ -2,15 +2,27 @@ import { useEffect, useMemo, useState } from "react";
 import Predictions from "../screens/Predictions";
 import { useSearchParams } from "react-router-dom";
 import Alert from "../screens/Alert";
+import { useAlerts } from "../hooks/useAlerts";
 
 function Sign() {
-  let [searchParams, _] = useSearchParams();
+  const [searchParams] = useSearchParams();
 
-  const stopIds = searchParams.get("stops");
-  const alertRoutes = searchParams.get("alerts");
+  const apiKey = searchParams.get("apiKey") ?? "";
+  const stopIds = searchParams.get("stopIds")?.split(",") ?? [];
 
   const [screenDataIdx, setScreenDataIdx] = useState(0);
-  const screenData = ["prediction", "alert"];
+
+  const { data: alertsData } = useAlerts({ apiKey, stopIds });
+
+  const screenData = useMemo(
+    () => [
+      ...alertsData.map((alertData) => ({
+        screenType: "alert",
+        data: alertData,
+      })),
+    ],
+    [alertsData]
+  );
 
   const currentScreenData = useMemo(
     () => screenData[screenDataIdx],
@@ -29,9 +41,9 @@ function Sign() {
 
   return (
     <div className="w-screen h-screen">
-      {currentScreenData === "prediction" && (
+      {currentScreenData?.screenType === "prediction" && (
         <Predictions
-          stopId={stopIds}
+          stopId={stopIds[0]}
           data={[
             {
               isRapid: true,
@@ -42,7 +54,9 @@ function Sign() {
           ]}
         />
       )}
-      {currentScreenData === "alert" && <Alert message="lalalalalal" />}
+      {currentScreenData?.screenType === "alert" && (
+        <Alert message={currentScreenData.data.message} />
+      )}
     </div>
   );
 }

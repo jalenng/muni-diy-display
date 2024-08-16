@@ -4,6 +4,8 @@ import "./index.css";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Sign from "./routes/Sign.tsx";
 import Config from "./routes/Config.tsx";
+import APITest from "./routes/APITest.tsx";
+import SWRTest from "./routes/SWRTest.tsx";
 
 const router = createBrowserRouter([
   {
@@ -13,6 +15,14 @@ const router = createBrowserRouter([
   {
     path: "/sign",
     element: <Sign />,
+  },
+  {
+    path: "/api-test",
+    element: <APITest />,
+  },
+  {
+    path: "/swr-test",
+    element: <SWRTest />,
   },
 ]);
 
