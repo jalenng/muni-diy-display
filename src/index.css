@@ -1,0 +1,39 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: "frutiger-condensed";
+  font-display: swap;
+  font-style: normal;
+  font-weight: 300;
+  src: url("FrutigerLTProLightCn.otf") format("opentype");
+}
+
+@font-face {
+  font-family: "frutiger-condensed";
+  font-display: swap;
+  font-style: normal;
+  font-weight: 400;
+  src: url("FrutigerLTProCondensed.otf") format("opentype");
+}
+@font-face {
+  font-family: "frutiger-condensed";
+  font-display: swap;
+  font-style: normal;
+  font-weight: 700;
+  src: url("FrutigerLTProBoldCn.otf") format("opentype");
+}
+
+:root {
+  font-weight: lighter;
+  font-family: frutiger-condensed, Inter, system-ui, Avenir, Helvetica, Arial,
+    sans-serif;
+  line-height: 1.5;
+  font-weight: 300;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
