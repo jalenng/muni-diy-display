@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { FormEvent, useState } from "react";
 import { useAlerts } from "../hooks/useAlerts";
 
 function SWRTest() {
@@ -6,14 +6,14 @@ function SWRTest() {
   const [stopIds, setStopIds] = useState([]);
   const { data, error, isLoading } = useAlerts({ apiKey, stopIds });
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const form = e.target;
+    const form = e.currentTarget;
     const formData = new FormData(form);
     const { apiKey, stopIds } = Object.fromEntries(formData.entries());
-    setApiKey(apiKey);
-    setStopIds(JSON.parse(`[${stopIds}]`).map((val) => String(val)));
+    setApiKey(String(apiKey));
+    setStopIds(JSON.parse(`[${stopIds}]`).map((val: string) => String(val)));
   };
 
   return (

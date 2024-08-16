@@ -3,12 +3,12 @@ import Person from "../assets/person.svg?react";
 import { TimeAndCrowdednessData } from "../types";
 
 function ArrivalTime(props: TimeAndCrowdednessData) {
-  const { time, crowdedness } = props;
+  const { time, crowdedness = 0 } = props;
 
   return (
     <span className="inline-flex flex-row items-baseline min-w-[112px]">
-      {Array.from({ length: crowdedness }, () => (
-        <span>
+      {Array.from({ length: crowdedness }, (_, index) => (
+        <span key={index}>
           <Person />
         </span>
       ))}

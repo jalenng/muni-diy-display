@@ -4,27 +4,28 @@ import { TimeAndCrowdednessData } from "../types";
 
 interface ArrivalTimesProps {
   data: TimeAndCrowdednessData[];
+  maxNumTimes?: number;
 }
 
 function ArrivalTimes(props: ArrivalTimesProps) {
-  const { data } = props;
+  const { data, maxNumTimes = 2 } = props;
 
-  const sortedData = useMemo(
-    () => data.sort((a, b) => a.time - b.time),
+  const shownData = useMemo(
+    () => data.sort((a, b) => a.time - b.time).slice(0, maxNumTimes),
     [data]
   );
 
   return (
     <div className="inline-block whitespace-nowrap">
-      {sortedData.map(({ time, crowdedness }, index) => (
-        <>
+      {shownData.map(({ time, crowdedness }, index) => (
+        <span key={index}>
           <ArrivalTime time={time} crowdedness={crowdedness} />
-          {index !== data.length - 1 && (
+          {index !== shownData.length - 1 && (
             <span className="text-[59px] leading-none">,</span>
           )}
-        </>
+        </span>
       ))}
-      {sortedData.length > 0 && (
+      {shownData.length > 0 && (
         <span className="pl-[20px] text-[26px]">min</span>
       )}
     </div>

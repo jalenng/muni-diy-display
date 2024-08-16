@@ -15,6 +15,7 @@ const api = axios.create({
 export const fetchStopMonitoringData = async (
   params: FetchStopMonitoringParams
 ): Promise<unknown> => {
+  console.debug("[API] 511/fetchStopMonitoringData", params);
   try {
     const { apiKey, stopCode } = params;
     const queryParams = { api_key: apiKey, agency: AGENCY, stopcode: stopCode };
@@ -31,6 +32,7 @@ export const fetchStopMonitoringData = async (
 export const fetchServiceAlerts = async (
   params: FetchServiceAlertsParams
 ): Promise<unknown> => {
+  console.debug("[API] 511/fetchServiceAlerts", params);
   try {
     const { apiKey } = params;
     const queryParams = { api_key: apiKey, agency: AGENCY, format: "JSON" };
@@ -47,6 +49,7 @@ export const fetchServiceAlerts = async (
 export const fetchPatterns = async (
   params: FetchPatternsParams
 ): Promise<unknown> => {
+  console.debug("[API] 511/fetchPatterns", params);
   try {
     const { apiKey, lineId } = params;
     const queryParams = {

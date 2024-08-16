@@ -3,6 +3,9 @@ import Predictions from "../screens/Predictions";
 import { useSearchParams } from "react-router-dom";
 import Alert from "../screens/Alert";
 import { useAlerts } from "../hooks/useAlerts";
+import { usePredictions } from "../hooks/usePredictions";
+
+const SCREEN_CYCLE_INTERVAL = 5000;
 
 function Sign() {
   const [searchParams] = useSearchParams();
@@ -13,15 +16,17 @@ function Sign() {
   const [screenDataIdx, setScreenDataIdx] = useState(0);
 
   const { data: alertsData } = useAlerts({ apiKey, stopIds });
+  const { data: predictionData } = usePredictions({ apiKey, stopIds });
 
   const screenData = useMemo(
     () => [
-      ...alertsData.map((alertData) => ({
+      { screenType: "prediction", data: predictionData },
+      ...alertsData.map((data) => ({
         screenType: "alert",
-        data: alertData,
+        data,
       })),
     ],
-    [alertsData]
+    [predictionData, alertsData]
   );
 
   const currentScreenData = useMemo(
@@ -32,7 +37,7 @@ function Sign() {
   useEffect(() => {
     const intervalId = setInterval(() => {
       setScreenDataIdx((prev) => (prev + 1) % screenData.length);
-    }, 5000);
+    }, SCREEN_CYCLE_INTERVAL);
 
     return () => {
       clearInterval(intervalId);
@@ -42,17 +47,7 @@ function Sign() {
   return (
     <div className="w-screen h-screen">
       {currentScreenData?.screenType === "prediction" && (
-        <Predictions
-          stopId={stopIds[0]}
-          data={[
-            {
-              isRapid: true,
-              routeNumber: "123",
-              direction: "123",
-              timeAndCrowdedness: [],
-            },
-          ]}
-        />
+        <Predictions stopId={stopIds[0]} data={currentScreenData.data} />
       )}
       {currentScreenData?.screenType === "alert" && (
         <Alert message={currentScreenData.data.message} />

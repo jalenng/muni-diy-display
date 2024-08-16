@@ -1,14 +1,20 @@
+import { FormEvent } from "react";
 import {
   fetchPatterns,
   fetchServiceAlerts,
   fetchStopMonitoringData,
 } from "../api/511";
+import {
+  FetchPatternsParams,
+  FetchServiceAlertsParams,
+  FetchStopMonitoringParams,
+} from "../types/api";
 
 function APITest() {
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const form = e.target;
+    const form = e.currentTarget;
     const formData = new FormData(form);
     const { endpoint, ...rest } = Object.fromEntries(formData.entries());
 
@@ -16,13 +22,17 @@ function APITest() {
 
     switch (endpoint) {
       case "stopMonitoring":
-        result = await fetchStopMonitoringData(rest);
+        result = await fetchStopMonitoringData(
+          rest as unknown as FetchStopMonitoringParams
+        );
         break;
       case "patterns":
-        result = await fetchPatterns(rest);
+        result = await fetchPatterns(rest as unknown as FetchPatternsParams);
         break;
       case "serviceAlerts":
-        result = await fetchServiceAlerts(rest);
+        result = await fetchServiceAlerts(
+          rest as unknown as FetchServiceAlertsParams
+        );
         break;
     }
 

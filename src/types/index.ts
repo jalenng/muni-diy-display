@@ -11,3 +11,8 @@ export interface TimeAndCrowdednessData {
   time: number;
   crowdedness?: number;
 }
+
+export interface AlertData {
+  stopId: string;
+  message: string;
+}

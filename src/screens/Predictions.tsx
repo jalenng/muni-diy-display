@@ -18,6 +18,7 @@ function Predictions(props: PredictionsProps) {
 
       {data.map((prediction) => (
         <Prediction
+          key={`${prediction.routeNumber},${prediction.direction}`}
           isRapid={prediction.isRapid}
           routeNumber={prediction.routeNumber}
           direction={prediction.direction}
