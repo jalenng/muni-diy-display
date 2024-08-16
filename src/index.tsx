@@ -1,13 +1,13 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { createHashRouter, RouterProvider } from "react-router-dom";
 import Sign from "./routes/Sign.tsx";
 import Config from "./routes/Config.tsx";
 import APITest from "./routes/APITest.tsx";
 import SWRTest from "./routes/SWRTest.tsx";
 
-const router = createBrowserRouter([
+const router = createHashRouter([
   {
     path: "/",
     element: <Config />,
