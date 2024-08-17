@@ -4,6 +4,7 @@ import { useSearchParams } from "react-router-dom";
 import Alert from "../screens/Alert";
 import { useAlerts } from "../hooks/useAlerts";
 import { usePredictions } from "../hooks/usePredictions";
+import Loading from "../components/Loading";
 
 const SCREEN_CYCLE_INTERVAL = 5000;
 
@@ -20,7 +21,9 @@ function Sign() {
 
   const screenData = useMemo(
     () => [
-      { screenType: "prediction", data: predictionData },
+      ...(predictionData.length > 0
+        ? [{ screenType: "prediction", data: predictionData }]
+        : []),
       ...alertsData.map((data) => ({
         screenType: "alert",
         data,
@@ -46,6 +49,8 @@ function Sign() {
 
   return (
     <div className="w-screen h-screen">
+      {currentScreenData === undefined && <Loading />}
+
       {currentScreenData?.screenType === "prediction" && (
         <Predictions stopId={stopIds[0]} data={currentScreenData.data} />
       )}
