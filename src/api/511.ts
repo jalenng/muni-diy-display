@@ -5,7 +5,7 @@ import {
   FetchPatternsParams,
 } from "../types/api";
 
-const BASE_URL = "http://api.511.org/transit";
+const BASE_URL = "https://api.511.org/transit";
 const AGENCY = "SF";
 
 const api = axios.create({

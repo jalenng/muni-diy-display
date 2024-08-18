@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "homepage": "http://jalenng.github.io/muni-diy-display-beta/#",
+  "homepage": "https://jalenng.github.io/muni-diy-display-beta/#",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
