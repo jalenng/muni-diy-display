@@ -49,6 +49,17 @@ export function usePredictions({
       stopMonitoringData?.[0]?.ServiceDelivery?.StopMonitoringDelivery
         ?.MonitoredStopVisit ?? [];
 
+    const calculateRouteType = (lineRef) => {
+      const owlBusRoutes = ["90", "91", "NOWL", "LOWL"];
+      if (owlBusRoutes.includes(lineRef)) {
+        return "owl";
+      }
+      if (lineRef.endsWith("R")) {
+        return "rapid";
+      }
+      return "local";
+    };
+
     const calculateCrowdedness = (occupancy) => {
       if (!occupancy || occupancy === "null") return 0;
       return occupancy === "seatsAvailable" ? 1 : 2;
@@ -70,6 +81,7 @@ export function usePredictions({
 
       return {
         key: `${lineRef},${destinationRef}`,
+        routeType: calculateRouteType(lineRef),
         routeNumber: lineRef,
         direction: destinationName,
         timeAndCrowdedness: {
@@ -80,12 +92,12 @@ export function usePredictions({
     };
 
     const lineToPredictionsMap = stopVisits.reduce((map, visit) => {
-      const { key, routeNumber, direction, timeAndCrowdedness } =
+      const { key, routeType, routeNumber, direction, timeAndCrowdedness } =
         processVisit(visit);
 
       if (!map.has(key)) {
         map.set(key, {
-          isRapid: false,
+          routeType,
           routeNumber,
           direction,
           timeAndCrowdedness: [timeAndCrowdedness],

@@ -1,18 +1,20 @@
 import clsx from "clsx";
+import { RouteType } from "../types";
 
 interface RouteBadgeProps {
-  isRapid: boolean;
+  routeType: RouteType;
   routeNumber: string | number;
 }
 
 function RouteBadge(props: RouteBadgeProps) {
-  const { isRapid, routeNumber } = props;
+  const { routeType, routeNumber } = props;
 
   return (
     <div
       className={clsx("flex px-[67px] py-[9px] rounded-[54px]", {
-        "bg-[#C3074D]": isRapid,
-        "bg-[#005B94]": !isRapid,
+        "bg-[#005B94]": routeType === "local",
+        "bg-[#C3074D]": routeType === "rapid",
+        "bg-[#4D5356]": routeType === "owl",
       })}
     >
       <span className={"text-[100px] leading-none text-white"}>

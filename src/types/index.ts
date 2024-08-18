@@ -1,7 +1,7 @@
-// export * from './api.ts';
+export type RouteType = "rapid" | "owl" | "local";
 
 export interface PredictionData {
-  isRapid: boolean;
+  routeType: RouteType;
   routeNumber: string | number;
   direction: string;
   timeAndCrowdedness: TimeAndCrowdednessData[];
