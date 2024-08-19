@@ -8,7 +8,7 @@ import {
   FetchPatternsParams,
   FetchServiceAlertsParams,
   FetchStopMonitoringParams,
-} from "../types/api";
+} from "../types/511";
 
 function APITest() {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {

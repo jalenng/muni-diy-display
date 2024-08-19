@@ -1,16 +1,21 @@
 import useSWR from "swr";
 import { fetchPatterns, fetchStopMonitoringData } from "../api/511";
 import { useMemo } from "react";
+import {
+  MonitoredStopVisit,
+  Occupancy,
+} from "../types/511/stopMonitoringTypes";
+import { FetchPatternsRes } from "../types/511";
 interface UsePredictionsParams {
   apiKey: string;
-  stopIds: string[];
+  stopId: string;
   stopMonitoringRefreshInterval?: number;
   patternsRefreshInterval?: number;
 }
 
 export function usePredictions({
   apiKey,
-  stopIds,
+  stopId,
   stopMonitoringRefreshInterval = 60000, // 1 min
   patternsRefreshInterval = 86400000, // 1 day
 }: UsePredictionsParams) {
@@ -18,38 +23,47 @@ export function usePredictions({
     data: stopMonitoringData,
     error: stopMonitoringError,
     isLoading: stopMonitoringIsLoading,
-  }: { data: unknown; error: unknown; isLoading: boolean } = useSWR(
-    ["511/fetchStopMonitoringData", stopIds],
-    ([_, stopIds]) =>
-      Promise.all(
-        stopIds.map((stopId) =>
-          fetchStopMonitoringData({ apiKey, stopCode: stopId })
-        )
-      ),
+  } = useSWR(
+    ["511/fetchStopMonitoringData", stopId],
+    ([_, stopId]) => fetchStopMonitoringData({ apiKey, stopCode: stopId }),
     { refreshInterval: stopMonitoringRefreshInterval }
   );
 
   const lineIds = useMemo(() => {
-    return ["8"];
+    const lineIdsList =
+      stopMonitoringData?.ServiceDelivery.StopMonitoringDelivery.MonitoredStopVisit.map(
+        (stopVisit) => stopVisit?.MonitoredVehicleJourney?.LineRef
+      );
+    return [...new Set(lineIdsList)];
   }, [stopMonitoringData]);
 
   const {
-    data: fetchPatternsData,
-    error: fetchPatternsError,
-    isLoading: fetchPatternsIsLoading,
-  }: { data: unknown; error: unknown; isLoading: boolean } = useSWR(
+    data: patternsData,
+    error: patternsError,
+    isLoading: patternsIsLoading,
+  } = useSWR(
     ["511/fetchPatterns", lineIds],
-    ([_, lineIds]) =>
-      Promise.all(lineIds.map((lineId) => fetchPatterns({ apiKey, lineId }))),
+    async ([_, lineIds]) => {
+      const results = await Promise.all(
+        lineIds.map(async (lineId) => {
+          const data = await fetchPatterns({ apiKey, lineId });
+          return { lineId, data };
+        })
+      );
+      return results.reduce((acc, { lineId, data }) => {
+        acc[lineId] = data;
+        return acc;
+      }, {} as Record<string, FetchPatternsRes>);
+    },
     { refreshInterval: patternsRefreshInterval }
   );
 
   const simplifiedPredictionData = useMemo(() => {
     const stopVisits =
-      stopMonitoringData?.[0]?.ServiceDelivery?.StopMonitoringDelivery
-        ?.MonitoredStopVisit ?? [];
+      stopMonitoringData?.ServiceDelivery.StopMonitoringDelivery
+        .MonitoredStopVisit ?? [];
 
-    const calculateRouteType = (lineRef) => {
+    const calculateRouteType = (lineRef: string) => {
       const owlBusRoutes = ["90", "91", "NOWL", "LOWL"];
       if (owlBusRoutes.includes(lineRef)) {
         return "owl";
@@ -60,15 +74,42 @@ export function usePredictions({
       return "local";
     };
 
-    const calculateCrowdedness = (occupancy) => {
-      if (!occupancy || occupancy === "null") return 0;
-      return occupancy === "seatsAvailable" ? 1 : 2;
+    const calculateCrowdedness = (occupancy: Occupancy | null | undefined) => {
+      const occupancyToCrowdednessMap = {
+        seatsAvailable: 1,
+        standingAvailable: 2,
+        full: 3,
+      };
+      if (occupancy === null || occupancy === undefined) {
+        return 0;
+      } else {
+        return occupancyToCrowdednessMap[occupancy] ?? 0;
+      }
     };
 
-    const calculateArrivalTime = (arrivalTime) =>
-      Math.round((Date.parse(arrivalTime) - Date.now()) / 1000 / 60);
+    const getBetterDestinationName = (
+      lineRef: string,
+      destinationRef: string
+    ) => {
+      const patternsDataForLine = patternsData?.[lineRef];
+      if (patternsDataForLine !== undefined) {
+        const foundPattern = patternsDataForLine.journeyPatterns.find(
+          (pattern) => {
+            const allPointsSorted = [
+              ...pattern.PointsInSequence.StopPointInJourneyPattern,
+              ...pattern.PointsInSequence.TimingPointInJourneyPattern,
+            ].sort((a, b) => parseInt(a.Order) - parseInt(b.Order));
+            const lastSortedPoint = allPointsSorted[allPointsSorted.length - 1];
+            return lastSortedPoint.ScheduledStopPointRef === destinationRef;
+          }
+        );
+        if (foundPattern) {
+          return foundPattern.DestinationDisplayView.FontText;
+        }
+      }
+    };
 
-    const processVisit = (visit) => {
+    const processVisit = (visit: MonitoredStopVisit) => {
       const {
         MonitoredVehicleJourney: {
           LineRef: lineRef,
@@ -83,9 +124,10 @@ export function usePredictions({
         key: `${lineRef},${destinationRef}`,
         routeType: calculateRouteType(lineRef),
         routeNumber: lineRef,
-        direction: destinationName,
+        direction:
+          getBetterDestinationName(lineRef, destinationRef) ?? destinationName,
         timeAndCrowdedness: {
-          time: calculateArrivalTime(arrivalTime),
+          time: arrivalTime,
           crowdedness: calculateCrowdedness(occupancy),
         },
       };
@@ -110,14 +152,14 @@ export function usePredictions({
     }, new Map());
 
     return [...lineToPredictionsMap.values()];
-  }, [stopMonitoringData]);
+  }, [patternsData, stopMonitoringData]);
 
   return {
     data: simplifiedPredictionData,
-    error: { stopMonitoringError, fetchPatternsError },
+    error: { stopMonitoringError, patternsError },
     isLoading: {
       stopMonitoringIsLoading,
-      fetchPatternsIsLoading,
+      patternsIsLoading,
     },
   };
 }

@@ -11,7 +11,7 @@ function RouteBadge(props: RouteBadgeProps) {
 
   return (
     <div
-      className={clsx("flex px-[67px] py-[9px] rounded-[54px]", {
+      className={clsx("flex px-[67px] py-[9px] rounded-full", {
         "bg-[#005B94]": routeType === "local",
         "bg-[#C3074D]": routeType === "rapid",
         "bg-[#4D5356]": routeType === "owl",

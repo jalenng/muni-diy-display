@@ -2,7 +2,10 @@ import clsx from "clsx";
 import ArrivalTimes from "../components/ArrivalTimes";
 import RouteBadge from "../components/RouteBadge";
 import { TimeAndCrowdednessData } from "../types";
-import { RouteType } from "../types/api";
+import { RouteType } from "../types";
+import { useCallback, useEffect, useState } from "react";
+
+const SCREEN_CYCLE_INTERVAL = 10000;
 
 interface PredictionProps {
   routeType: RouteType;
@@ -13,6 +16,35 @@ interface PredictionProps {
 
 function Prediction(props: PredictionProps) {
   const { routeType, routeNumber, direction, timeAndCrowdedness } = props;
+
+  const [timeInMinutesAndCrowdedness, setTimeInMinutesAndCrowdedness] =
+    useState<{ time: number; crowdedness: number | undefined }[]>([]);
+
+  const updateTimeInMinutes = useCallback(() => {
+    const convertedResult = timeAndCrowdedness.map(({ time, crowdedness }) => {
+      const timeInMinutes = Math.round(
+        (Date.parse(time) - Date.now()) / 1000 / 60
+      );
+      const normalizedTimeInMinutes = Math.max(0, timeInMinutes);
+      return {
+        time: normalizedTimeInMinutes,
+        crowdedness,
+      };
+    });
+    setTimeInMinutesAndCrowdedness(convertedResult);
+  }, [timeAndCrowdedness]);
+
+  useEffect(() => {
+    updateTimeInMinutes();
+
+    const intervalId = setInterval(() => {
+      updateTimeInMinutes();
+    }, SCREEN_CYCLE_INTERVAL);
+
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, [updateTimeInMinutes]);
 
   return (
     <div className="bg-white border border-[#D3D3D3] flex flex-row items-stretch">
@@ -29,12 +61,12 @@ function Prediction(props: PredictionProps) {
         {/* Top */}
         <div className="flex flex-row items-center justify-between pt-[11px] pl-[12px] overflow-hidden">
           <RouteBadge routeType={routeType} routeNumber={routeNumber} />
-          <ArrivalTimes data={timeAndCrowdedness} />
+          <ArrivalTimes data={timeInMinutesAndCrowdedness} />
         </div>
         {/* Bottom */}
         <div className="flex flex-row items-center pl-[14px] gap-[13px] overflow-hidden">
           <div className="text-[42px]">➞</div>
-          <div className="overflow-hidden text-ellipsis whitespace-nowrap text-[72px] tracking-[-0.1%]">
+          <div className="overflow-hidden text-ellipsis whitespace-nowrap text-[72px] leading-tight tracking-[-0.1%]">
             {direction}
           </div>
         </div>

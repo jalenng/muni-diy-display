@@ -1,9 +1,9 @@
 import { useMemo } from "react";
 import ArrivalTime from "./ArrivalTime";
-import { TimeAndCrowdednessData } from "../types";
+import { MinuteTimeAndCrowdednessData } from "../types";
 
 interface ArrivalTimesProps {
-  data: TimeAndCrowdednessData[];
+  data: MinuteTimeAndCrowdednessData[];
   maxNumTimes?: number;
 }
 
@@ -12,7 +12,7 @@ function ArrivalTimes(props: ArrivalTimesProps) {
 
   const shownData = useMemo(
     () => data.sort((a, b) => a.time - b.time).slice(0, maxNumTimes),
-    [data]
+    [data, maxNumTimes]
   );
 
   return (

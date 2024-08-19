@@ -12,12 +12,12 @@ function Sign() {
   const [searchParams] = useSearchParams();
 
   const apiKey = searchParams.get("apiKey") ?? "";
-  const stopIds = searchParams.get("stopIds")?.split(",") ?? [];
+  const stopId = searchParams.get("stopId") ?? "";
 
   const [screenDataIdx, setScreenDataIdx] = useState(0);
 
-  const { data: alertsData } = useAlerts({ apiKey, stopIds });
-  const { data: predictionData } = usePredictions({ apiKey, stopIds });
+  const { data: alertsData } = useAlerts({ apiKey, stopId });
+  const { data: predictionData } = usePredictions({ apiKey, stopId });
 
   const screenData = useMemo(
     () => [
@@ -52,7 +52,7 @@ function Sign() {
       {currentScreenData === undefined && <Loading />}
 
       {currentScreenData?.screenType === "prediction" && (
-        <Predictions stopId={stopIds[0]} data={currentScreenData.data} />
+        <Predictions stopId={stopId} data={currentScreenData.data} />
       )}
       {currentScreenData?.screenType === "alert" && (
         <Alert message={currentScreenData.data.message} />

@@ -1,14 +1,14 @@
 import clsx from "clsx";
 import Person from "../assets/person.svg?react";
-import { TimeAndCrowdednessData } from "../types";
+import { MinuteTimeAndCrowdednessData } from "../types";
 
-function ArrivalTime(props: TimeAndCrowdednessData) {
+function ArrivalTime(props: MinuteTimeAndCrowdednessData) {
   const { time, crowdedness = 0 } = props;
 
   return (
     <span className="inline-flex flex-row items-baseline min-w-[112px]">
       {Array.from({ length: crowdedness }, (_, index) => (
-        <span key={index}>
+        <span key={index} className="py-[2px]">
           <Person />
         </span>
       ))}

@@ -3,7 +3,10 @@ import {
   FetchStopMonitoringParams,
   FetchServiceAlertsParams,
   FetchPatternsParams,
-} from "../types/api";
+  FetchStopMonitoringRes,
+  FetchServiceAlertsRes,
+  FetchPatternsRes,
+} from "../types/511";
 
 const BASE_URL = "https://api.511.org/transit";
 const AGENCY = "SF";
@@ -14,12 +17,12 @@ const api = axios.create({
 
 export const fetchStopMonitoringData = async (
   params: FetchStopMonitoringParams
-): Promise<unknown> => {
+): Promise<FetchStopMonitoringRes> => {
   console.debug("[API] 511/fetchStopMonitoringData", params);
   try {
     const { apiKey, stopCode } = params;
     const queryParams = { api_key: apiKey, agency: AGENCY, stopcode: stopCode };
-    const response = await api.get<unknown>("/StopMonitoring", {
+    const response = await api.get<FetchStopMonitoringRes>("/StopMonitoring", {
       params: queryParams,
     });
     return response.data;
@@ -31,12 +34,12 @@ export const fetchStopMonitoringData = async (
 
 export const fetchServiceAlerts = async (
   params: FetchServiceAlertsParams
-): Promise<unknown> => {
+): Promise<FetchServiceAlertsRes> => {
   console.debug("[API] 511/fetchServiceAlerts", params);
   try {
     const { apiKey } = params;
     const queryParams = { api_key: apiKey, agency: AGENCY, format: "JSON" };
-    const response = await api.get<unknown>("/servicealerts", {
+    const response = await api.get<FetchServiceAlertsRes>("/servicealerts", {
       params: queryParams,
     });
     return response.data;
@@ -48,7 +51,7 @@ export const fetchServiceAlerts = async (
 
 export const fetchPatterns = async (
   params: FetchPatternsParams
-): Promise<unknown> => {
+): Promise<FetchPatternsRes> => {
   console.debug("[API] 511/fetchPatterns", params);
   try {
     const { apiKey, lineId } = params;
@@ -57,7 +60,7 @@ export const fetchPatterns = async (
       operator_id: AGENCY,
       line_id: lineId,
     };
-    const response = await api.get<unknown>("/patterns", {
+    const response = await api.get<FetchPatternsRes>("/patterns", {
       params: queryParams,
     });
     return response.data;

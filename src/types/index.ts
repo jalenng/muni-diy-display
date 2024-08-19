@@ -8,6 +8,10 @@ export interface PredictionData {
 }
 
 export interface TimeAndCrowdednessData {
+  time: string;
+  crowdedness?: number;
+}
+export interface MinuteTimeAndCrowdednessData {
   time: number;
   crowdedness?: number;
 }

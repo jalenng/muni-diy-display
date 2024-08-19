@@ -1,9 +1,9 @@
 {
-  "name": "muni-diy-display-beta",
+  "name": "muni-diy-display",
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "homepage": "https://jalenng.github.io/muni-diy-display-beta/#",
+  "homepage": "https://jalenng.github.io/muni-diy-display/#",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",

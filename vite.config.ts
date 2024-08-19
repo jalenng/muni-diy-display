@@ -6,6 +6,6 @@ import svgr from "vite-plugin-svgr";
 export default defineConfig(({ mode }) => {
   return {
     plugins: [react(), svgr()],
-    base: mode === "production" ? "/muni-diy-display-beta/" : "",
+    base: mode === "production" ? "/muni-diy-display/" : "",
   };
 });
