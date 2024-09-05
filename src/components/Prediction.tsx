@@ -51,9 +51,9 @@ function Prediction(props: PredictionProps) {
       {/* Accent line */}
       <div
         className={clsx("w-[8px]  shrink-0", {
-          "bg-[#005B94]": routeType === "local",
-          "bg-[#C3074D]": routeType === "rapid",
-          "bg-[#4D5356]": routeType === "owl",
+          "bg-[#005B95]": routeType === "local",
+          "bg-[#BF2B45]": routeType === "rapid",
+          "bg-[#666666]": routeType === "owl",
         })}
       ></div>
       {/* Content */}

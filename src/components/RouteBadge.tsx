@@ -12,9 +12,9 @@ function RouteBadge(props: RouteBadgeProps) {
   return (
     <div
       className={clsx("flex px-[67px] py-[9px] rounded-full", {
-        "bg-[#005B94]": routeType === "local",
-        "bg-[#C3074D]": routeType === "rapid",
-        "bg-[#4D5356]": routeType === "owl",
+        "bg-[#005B95]": routeType === "local",
+        "bg-[#BF2B45]": routeType === "rapid",
+        "bg-[#666666]": routeType === "owl",
       })}
     >
       <span className={"text-[100px] leading-none text-white"}>
