@@ -1,30 +1,12 @@
-import { useEffect, useMemo, useState } from "react";
-
-const ELLIPSIS_CYCLE_INTERVAL = 1000;
-
 function Loading() {
-  const [ellipsisCount, setEllipsisCount] = useState(1);
-
-  useEffect(() => {
-    const intervalId = setInterval(() => {
-      setEllipsisCount((prev) => (prev % 3) + 1);
-    }, ELLIPSIS_CYCLE_INTERVAL);
-
-    return () => {
-      clearInterval(intervalId);
-    };
-  });
-
-  const ellipsisString = useMemo(
-    () => ".".repeat(ellipsisCount),
-    [ellipsisCount]
-  );
-
   return (
-    <div className="w-full h-full flex items-center justify-center bg-black">
-      <div className="text-[64px] text-white">
-        <span>Loading signage</span>
-        <span>{ellipsisString}</span>
+    <div className="w-full h-full flex items-center justify-center bg-[#005B95]">
+      <div className="font-bold text-[32px] leading-[150%] tracking-[0.35em] text-center uppercase font-['frutiger'] text-white">
+        <p>
+          Connecting <br />
+          to <br />
+          internet...
+        </p>
       </div>
     </div>
   );
