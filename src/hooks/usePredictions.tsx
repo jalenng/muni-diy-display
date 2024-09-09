@@ -64,8 +64,34 @@ export function usePredictions({
         .MonitoredStopVisit ?? [];
 
     const calculateRouteType = (lineRef: string) => {
-      const owlBusRoutes = ["90", "91", "NOWL", "LOWL"];
-      if (owlBusRoutes.includes(lineRef)) {
+      if (["F"].includes(lineRef)) {
+        return "f";
+      }
+      if (["J"].includes(lineRef)) {
+        return "j";
+      }
+      if (["K", "KBUS"].includes(lineRef)) {
+        return "k";
+      }
+      if (["L", "LBUS"].includes(lineRef)) {
+        return "l";
+      }
+      if (["M", "MBUS"].includes(lineRef)) {
+        return "m";
+      }
+      if (["N", "NBUS"].includes(lineRef)) {
+        return "n";
+      }
+      if (["S"].includes(lineRef)) {
+        return "s";
+      }
+      if (["T", "TBUS"].includes(lineRef)) {
+        return "t";
+      }
+      if (["CA", "PM", "PH"].includes(lineRef)) {
+        return "cc";
+      }
+      if (["90", "91", "NOWL", "LOWL"].includes(lineRef)) {
         return "owl";
       }
       if (lineRef.endsWith("R")) {
@@ -136,6 +162,10 @@ export function usePredictions({
     const lineToPredictionsMap = stopVisits.reduce((map, visit) => {
       const { key, routeType, routeNumber, direction, timeAndCrowdedness } =
         processVisit(visit);
+
+      if (timeAndCrowdedness.time === null) {
+        return map;
+      }
 
       if (!map.has(key)) {
         map.set(key, {

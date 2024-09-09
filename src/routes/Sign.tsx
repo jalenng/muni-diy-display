@@ -5,14 +5,22 @@ import Alert from "../screens/Alert";
 import { useAlerts } from "../hooks/useAlerts";
 import { usePredictions } from "../hooks/usePredictions";
 import Loading from "../components/Loading";
+import { AlertData, PredictionData } from "../types";
 
 const SCREEN_CYCLE_INTERVAL = 5000;
 
 function Sign() {
   const [searchParams] = useSearchParams();
 
-  const apiKey = searchParams.get("apiKey") ?? "";
-  const stopId = searchParams.get("stopId") ?? "";
+  const apiKey = searchParams.get("apiKey");
+  const stopId = searchParams.get("stopId");
+
+  if (!apiKey) {
+    throw new Error("API key is missing");
+  }
+  if (!stopId) {
+    throw new Error("Stop ID is missing");
+  }
 
   const [screenDataIdx, setScreenDataIdx] = useState(0);
 
@@ -52,10 +60,13 @@ function Sign() {
       {currentScreenData === undefined && <Loading />}
 
       {currentScreenData?.screenType === "prediction" && (
-        <Predictions stopId={stopId} data={currentScreenData.data} />
+        <Predictions
+          stopId={stopId}
+          data={currentScreenData.data as PredictionData[]}
+        />
       )}
       {currentScreenData?.screenType === "alert" && (
-        <Alert message={currentScreenData.data.message} />
+        <Alert message={(currentScreenData.data as AlertData).message} />
       )}
     </div>
   );

@@ -4,6 +4,7 @@ import RouteBadge from "../components/RouteBadge";
 import { TimeAndCrowdednessData } from "../types";
 import { RouteType } from "../types";
 import { useCallback, useEffect, useState } from "react";
+import { routeStyles } from "./routeStyles";
 
 const SCREEN_CYCLE_INTERVAL = 10000;
 
@@ -49,13 +50,7 @@ function Prediction(props: PredictionProps) {
   return (
     <div className="bg-white border border-[#D3D3D3] flex flex-row items-stretch">
       {/* Accent line */}
-      <div
-        className={clsx("w-[8px]  shrink-0", {
-          "bg-[#005B95]": routeType === "local",
-          "bg-[#BF2B45]": routeType === "rapid",
-          "bg-[#666666]": routeType === "owl",
-        })}
-      ></div>
+      <div className={clsx(`w-[8px] shrink-0 ${routeStyles[routeType]}`)}></div>
       {/* Content */}
       <div className="flex flex-col grow items-stretch overflow-hidden gap-[4px]">
         {/* Top */}

@@ -1,5 +1,7 @@
 import clsx from "clsx";
 import { RouteType } from "../types";
+import { routeStyles } from "./routeStyles";
+import { useMemo } from "react";
 
 interface RouteBadgeProps {
   routeType: RouteType;
@@ -9,16 +11,24 @@ interface RouteBadgeProps {
 function RouteBadge(props: RouteBadgeProps) {
   const { routeType, routeNumber } = props;
 
+  const [numberPart, typePart] = useMemo(() => {
+    const regex = /^(.*?)(R|BUS)$/;
+    const match = routeNumber.toString().match(regex);
+
+    return match ? [match[1], match[2]] : [routeNumber, null];
+  }, [routeNumber]);
+
   return (
     <div
-      className={clsx("flex px-[67px] py-[9px] rounded-full", {
-        "bg-[#005B95]": routeType === "local",
-        "bg-[#BF2B45]": routeType === "rapid",
-        "bg-[#666666]": routeType === "owl",
-      })}
+      className={clsx(
+        `px-[67px] py-[9px] rounded-full ${routeStyles[routeType]}`
+      )}
     >
-      <span className={"text-[100px] leading-none text-white"}>
-        {routeNumber}
+      <span className={"text-[100px] leading-none align-middle"}>
+        {numberPart}
+      </span>
+      <span className={"text-[50px] leading-none align-middle"}>
+        {typePart}
       </span>
     </div>
   );

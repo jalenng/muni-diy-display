@@ -1,33 +1,33 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
-import { createHashRouter, RouterProvider } from "react-router-dom";
+import { HashRouter, Route, Routes } from "react-router-dom";
 import Sign from "./routes/Sign.tsx";
 import Config from "./routes/Config.tsx";
 import APITest from "./routes/APITest.tsx";
 import SWRTest from "./routes/SWRTest.tsx";
-
-const router = createHashRouter([
-  {
-    path: "/",
-    element: <Config />,
-  },
-  {
-    path: "/sign",
-    element: <Sign />,
-  },
-  {
-    path: "/api-test",
-    element: <APITest />,
-  },
-  {
-    path: "/swr-test",
-    element: <SWRTest />,
-  },
-]);
+import { ErrorBoundary } from "react-error-boundary";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <RouterProvider router={router} />
+    <ErrorBoundary
+      fallbackRender={({ error }: { error: Error }) => {
+        return (
+          <div role="alert">
+            <p>Something went wrong:</p>
+            <pre style={{ color: "red" }}>{error.message}</pre>
+          </div>
+        );
+      }}
+    >
+      <HashRouter>
+        <Routes>
+          <Route path="/" element={<Config />} />
+          <Route path="/sign" element={<Sign />} />
+          <Route path="/api-test" element={<APITest />} />
+          <Route path="/swr-test" element={<SWRTest />} />
+        </Routes>
+      </HashRouter>
+    </ErrorBoundary>
   </StrictMode>
 );
