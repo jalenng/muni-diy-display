@@ -8,7 +8,7 @@ function ArrivalTime(props: MinuteTimeAndCrowdednessData) {
   return (
     <span className="inline-flex flex-row items-baseline min-w-[112px]">
       {Array.from({ length: crowdedness }, (_, index) => (
-        <span key={index} className="py-[2px]">
+        <span key={index} className="py-[2px] text-[#008547]">
           <Person />
         </span>
       ))}
@@ -18,7 +18,7 @@ function ArrivalTime(props: MinuteTimeAndCrowdednessData) {
           "grow text-[104px] text-right font-normal leading-none",
           {
             // TODO: find correct color
-            "text-[#008546]": time === 0,
+            "text-[#008547]": time === 0,
             "text-black": time !== 0,
           }
         )}
