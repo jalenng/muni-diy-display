@@ -1,6 +1,6 @@
 import clsx from "clsx";
-import Person from "../assets/person.svg?react";
-import { MinuteTimeAndCrowdednessData } from "../types";
+import Person from "../../assets/person.svg?react";
+import { MinuteTimeAndCrowdednessData } from "../../types";
 
 function ArrivalTime(props: MinuteTimeAndCrowdednessData) {
   const { time, crowdedness = 0 } = props;

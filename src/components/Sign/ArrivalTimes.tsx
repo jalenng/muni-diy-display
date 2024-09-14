@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import ArrivalTime from "./ArrivalTime";
-import { MinuteTimeAndCrowdednessData } from "../types";
+import { MinuteTimeAndCrowdednessData } from "../../types";
 
 interface ArrivalTimesProps {
   data: MinuteTimeAndCrowdednessData[];
@@ -26,7 +26,7 @@ function ArrivalTimes(props: ArrivalTimesProps) {
         </span>
       ))}
       {shownData.length > 0 && (
-        <span className="pl-[20px] text-[26px]">min</span>
+        <span className="pl-[20px] text-[26px] font-light">min</span>
       )}
     </div>
   );

@@ -1,8 +1,8 @@
 import clsx from "clsx";
-import ArrivalTimes from "../components/ArrivalTimes";
-import RouteBadge from "../components/RouteBadge";
-import { TimeAndCrowdednessData } from "../types";
-import { RouteType } from "../types";
+import ArrivalTimes from "./ArrivalTimes";
+import RouteBadge from "./RouteBadge";
+import { TimeAndCrowdednessData } from "../../types";
+import { RouteType } from "../../types";
 import { useCallback, useEffect, useState } from "react";
 import { routeStyles } from "./routeStyles";
 
@@ -59,7 +59,7 @@ function Prediction(props: PredictionProps) {
           <ArrivalTimes data={timeInMinutesAndCrowdedness} />
         </div>
         {/* Bottom */}
-        <div className="flex flex-row items-center pl-[14px] gap-[13px] overflow-hidden">
+        <div className="flex flex-row items-center pl-[14px] gap-[13px] overflow-hidden font-light">
           <div className="text-[42px]">➞</div>
           <div className="overflow-hidden text-ellipsis whitespace-nowrap text-[72px] leading-tight tracking-[-0.1%]">
             {direction}

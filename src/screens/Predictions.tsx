@@ -1,4 +1,4 @@
-import Prediction from "../components/Prediction";
+import Prediction from "../components/Sign/Prediction";
 import { PredictionData } from "../types";
 
 interface PredictionsProps {

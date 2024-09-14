@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import { RouteType } from "../types";
+import { RouteType } from "../../types";
 import { routeStyles } from "./routeStyles";
 import { useMemo } from "react";
 
@@ -21,7 +21,7 @@ function RouteBadge(props: RouteBadgeProps) {
   return (
     <div
       className={clsx(
-        `px-[67px] py-[9px] rounded-full ${routeStyles[routeType]}`
+        `px-[67px] py-[9px] rounded-full font-light ${routeStyles[routeType]}`
       )}
     >
       <span className={"text-[100px] leading-none align-middle"}>
