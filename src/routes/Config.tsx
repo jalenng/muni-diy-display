@@ -1,35 +1,27 @@
-import { useCallback, useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import Input from "../components/Config/Input";
 import StepSection from "../components/Config/StepSection";
 import Button from "../components/Config/Button";
+import { usePreviewPaneSizing } from "../hooks/usePreviewPaneSizing";
 
 function Config() {
   const [apiKey, setApiKey] = useState("");
   const [stopId, setStopId] = useState("");
 
-  const getSearchParamsStr = useCallback(
-    (isPreview = false) => {
-      const searchParams = new URLSearchParams();
-      if (apiKey) {
-        searchParams.append("apiKey", apiKey);
-      }
-      if (stopId) {
-        searchParams.append("stopId", stopId);
-      }
-      if (isPreview) {
-        searchParams.append("preview", isPreview.toString());
-      }
-      return searchParams;
-    },
-    [apiKey, stopId]
-  );
-
   const resultURL = useMemo(() => {
-    return {
-      actualURL: `${window.location.origin}/#sign?${getSearchParamsStr()}`,
-      previewURL: `${window.location.origin}/#sign?${getSearchParamsStr(true)}`,
-    };
-  }, [getSearchParamsStr]);
+    const searchParams = new URLSearchParams();
+    if (apiKey) {
+      searchParams.append("apiKey", apiKey);
+    }
+    if (stopId) {
+      searchParams.append("stopId", stopId);
+    }
+    return `${window.location.origin}/#sign?${searchParams.toString()}`;
+  }, [apiKey, stopId]);
+
+  const previewContainerRef = useRef(null);
+  const { previewIframeWrapperStyles, previewIframeStyles } =
+    usePreviewPaneSizing(previewContainerRef, { y: 32 });
 
   return (
     <>
@@ -127,23 +119,15 @@ function Config() {
           </div> */}
 
             <StepSection number="3" header="Get your URL">
-              <Input
-                type="text"
-                value={resultURL.actualURL}
-                readonly="readonly"
-              />
+              <Input type="text" value={resultURL} readOnly={true} />
               <div className="flex gap-2">
                 <Button
                   isPrimary
-                  onClick={() =>
-                    navigator.clipboard.writeText(resultURL.actualURL)
-                  }
+                  onClick={() => navigator.clipboard.writeText(resultURL)}
                 >
                   Copy
                 </Button>
-                <Button
-                  onClick={() => window.open(resultURL.actualURL, "_blank")}
-                >
+                <Button onClick={() => window.open(resultURL, "_blank")}>
                   Preview
                 </Button>
               </div>
@@ -151,17 +135,27 @@ function Config() {
           </div>
 
           {/* Right side: preview */}
-          <div className="grow basis-0 flex flex-col items-center justify-center">
-            <figure>
-              <iframe
-                key={resultURL.previewURL}
-                src={resultURL.previewURL}
-                className="w-[360px] h-[230px] border border-[#d5d5d6]"
-              ></iframe>
-              <figcaption className="text-[#636667] text-center">
-                Preview
-              </figcaption>
-            </figure>
+          <div
+            ref={previewContainerRef}
+            className="grow basis-0 flex justify-center w-[40%]"
+          >
+            <div className="flex items-center sticky top-0 max-h-screen">
+              <figure>
+                <div
+                  className="border border-[#d5d5d6]"
+                  style={previewIframeWrapperStyles}
+                >
+                  <iframe
+                    key={resultURL}
+                    src={resultURL}
+                    style={previewIframeStyles}
+                  ></iframe>
+                </div>
+                <figcaption className="text-[#636667] text-center">
+                  Preview
+                </figcaption>
+              </figure>
+            </div>
           </div>
         </div>
       </div>

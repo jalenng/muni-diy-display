@@ -6,7 +6,6 @@ import { useAlerts } from "../hooks/useAlerts";
 import { usePredictions } from "../hooks/usePredictions";
 import Loading from "../components/Sign/Loading";
 import { AlertData, PredictionData } from "../types";
-import clsx from "clsx";
 
 const SCREEN_CYCLE_INTERVAL = 5000;
 
@@ -15,7 +14,6 @@ function Sign() {
 
   const apiKey = searchParams.get("apiKey");
   const stopId = searchParams.get("stopId");
-  const isPreview = searchParams.get("preview") === "true";
 
   if (!apiKey) {
     throw new Error("API key is missing");
@@ -58,11 +56,7 @@ function Sign() {
   });
 
   return (
-    <div
-      className={clsx("w-screen h-screen font-[frutiger-condensed]", {
-        "scale-50 w-[200%] h-[200%] origin-top-left": isPreview,
-      })}
-    >
+    <div className="w-screen h-screen font-[frutiger-condensed]">
       {currentScreenData === undefined && <Loading />}
 
       {currentScreenData?.screenType === "prediction" && (

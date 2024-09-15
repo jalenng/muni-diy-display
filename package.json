@@ -13,6 +13,7 @@
     "deploy": "gh-pages -d dist"
   },
   "dependencies": {
+    "@react-hook/resize-observer": "^2.0.2",
     "axios": "^1.7.4",
     "clsx": "^2.1.1",
     "pnpm": "^9.7.1",
