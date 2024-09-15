@@ -1,4 +1,5 @@
 import { useMemo, useRef, useState } from "react";
+import Logo from "../assets/muni-diy-display-plain.svg?react";
 import Input from "../components/Config/Input";
 import StepSection from "../components/Config/StepSection";
 import Button from "../components/Config/Button";
@@ -16,7 +17,7 @@ function Config() {
     if (stopId) {
       searchParams.append("stopId", stopId);
     }
-    return `${window.location.origin}/#sign?${searchParams.toString()}`;
+    return `${window.location.href}/#sign?${searchParams.toString()}`;
   }, [apiKey, stopId]);
 
   const previewContainerRef = useRef(null);
@@ -29,7 +30,7 @@ function Config() {
         <nav className="flex flex-row">
           <a href="/" title="Home" className="flex items-stretch">
             <div className="bg-[#BF2B45] flex items-center justify-center w-14 h-14">
-              <img src="/muni-diy-display-plain.svg" className="w-8 h-8" />
+              <Logo className="w-8 h-8" />
             </div>
             <div className="flex items-center text-white text-[22px] px-4 font-bold bg-[#525657]">
               Muni DIY Display
