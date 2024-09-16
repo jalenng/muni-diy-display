@@ -95,3 +95,8 @@ a {
   text-decoration: underline !important;
   text-decoration-thickness: 1px !important;
 }
+
+*:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 0.2rem rgba(43, 116, 183, 0.25);
+}

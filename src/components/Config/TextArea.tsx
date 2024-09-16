@@ -1,39 +1,37 @@
 import clsx from "clsx";
-import { ClassAttributes, InputHTMLAttributes, useRef } from "react";
+import { ClassAttributes, TextareaHTMLAttributes, useRef } from "react";
 import { JSX } from "react/jsx-runtime";
 import Button from "./Button";
 import { Copy, ClipboardPaste } from "lucide-react";
 
-function Input(
+function TextArea(
   props: JSX.IntrinsicAttributes &
-    ClassAttributes<HTMLInputElement> &
-    InputHTMLAttributes<HTMLInputElement> & {
+    ClassAttributes<HTMLTextAreaElement> &
+    TextareaHTMLAttributes<HTMLTextAreaElement> & {
       showCopyButton?: boolean;
       showPasteButton?: boolean;
     }
 ) {
-  const inputRef = useRef<HTMLInputElement>(null);
+  const textAreaRef = useRef<HTMLTextAreaElement>(null);
   const { className, showCopyButton, showPasteButton, ...rest } = props;
-
   return (
     <div className="relative w-full my-2">
-      <input
-        ref={inputRef}
+      <textarea
+        ref={textAreaRef}
         {...rest}
         className={clsx(
-          "px-3 py-2.5 bg-white border-[#d5d5d6] border rounded-[4px] placeholder:text-[#636667] w-full invalid:border-red-500 valid:border-green-500",
+          "px-3 py-2.5 bg-white border-[#d5d5d6] border rounded-[4px] placeholder:text-[#636667] w-full",
           className
         )}
       />
-
-      <div className="flex flex-row gap-2 absolute bottom-1.5 top-1.5 right-2">
+      <div className="flex flex-row gap-2 absolute bottom-4 right-2">
         {showCopyButton && (
           <Button
             title="Copy"
             isIconOnly
             onClick={async () => {
-              if (inputRef.current) {
-                navigator.clipboard.writeText(inputRef.current.value.trim());
+              if (textAreaRef.current) {
+                navigator.clipboard.writeText(textAreaRef.current.value.trim());
               }
             }}
           >
@@ -46,10 +44,10 @@ function Input(
             isIconOnly
             onClick={async () => {
               const clipboardText = await navigator.clipboard.readText();
-              if (inputRef.current) {
-                inputRef.current.value = clipboardText.trim();
+              if (textAreaRef.current) {
+                textAreaRef.current.value = clipboardText.trim();
                 const changeEvent = new Event("change", { bubbles: true });
-                inputRef.current.dispatchEvent(changeEvent);
+                textAreaRef.current.dispatchEvent(changeEvent);
               }
             }}
           >
@@ -61,4 +59,4 @@ function Input(
   );
 }
 
-export default Input;
+export default TextArea;

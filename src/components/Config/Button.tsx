@@ -5,16 +5,28 @@ import { JSX } from "react/jsx-runtime";
 function Button(
   props: JSX.IntrinsicAttributes &
     ClassAttributes<HTMLButtonElement> &
-    ButtonHTMLAttributes<HTMLButtonElement> & { isPrimary?: boolean }
+    ButtonHTMLAttributes<HTMLButtonElement> & {
+      variant?: "primary" | "secondary" | "tertiary";
+      isIconOnly?: boolean;
+    }
 ) {
-  const { children, isPrimary, ...rest } = props;
+  const { children, variant, isIconOnly, className, ...rest } = props;
   return (
     <button
       {...rest}
-      className={clsx("px-3 py-2 rounded-[4px] text-white", {
-        "bg-[#BF2B45]": isPrimary,
-        "bg-[#6C757D]": !isPrimary,
-      })}
+      className={clsx(
+        "rounded-[4px] whitespace-nowrap w-fit h-fit py-2",
+        className,
+        {
+          "px-3": !isIconOnly,
+          "px-2": isIconOnly,
+
+          "bg-[#BF2B45] text-white": variant === "primary",
+          "bg-[#6C757D] text-white": variant === "secondary",
+          "bg-[#ffffff] text-black border border-[#e3e3e3]":
+            variant === undefined || variant === "tertiary",
+        }
+      )}
     >
       {children}
     </button>

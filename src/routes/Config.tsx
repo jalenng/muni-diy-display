@@ -4,10 +4,16 @@ import Input from "../components/Config/Input";
 import StepSection from "../components/Config/StepSection";
 import Button from "../components/Config/Button";
 import { usePreviewPaneSizing } from "../hooks/usePreviewPaneSizing";
+import TextArea from "../components/Config/TextArea";
+import URLImportDialog from "../components/Config/URLImportDialog";
 
 function Config() {
   const [apiKey, setApiKey] = useState("");
+  const [isApiKeyValid, setIsApiKeyValid] = useState(false);
   const [stopId, setStopId] = useState("");
+  const [isStopIdValid, setIsStopIdValid] = useState(false);
+
+  const [isImportDialogOpen, setIsImportDialogOpen] = useState(false);
 
   const resultURL = useMemo(() => {
     const searchParams = new URLSearchParams();
@@ -17,18 +23,32 @@ function Config() {
     if (stopId) {
       searchParams.append("stopId", stopId);
     }
-    return `${window.location.href}/#sign?${searchParams.toString()}`;
+    return `${window.location.href}#sign?${searchParams.toString()}`;
   }, [apiKey, stopId]);
 
   const previewContainerRef = useRef(null);
   const { previewIframeWrapperStyles, previewIframeStyles } =
     usePreviewPaneSizing(previewContainerRef, { y: 32 });
 
+  const lastValidStepNumber = useMemo(() => {
+    const testVals = [true, isApiKeyValid, isStopIdValid];
+    const indexOfFirstFailedTest = testVals.findIndex((val) => !val);
+    return indexOfFirstFailedTest > 0
+      ? indexOfFirstFailedTest
+      : testVals.length;
+  }, [isApiKeyValid, isStopIdValid]);
+
+  const parseURLToParams = (url: string) => {
+    const hashRoute = new URL(url).hash;
+    const [_, queryString] = hashRoute.split("?");
+    return Object.fromEntries(new URLSearchParams(queryString));
+  };
+
   return (
     <>
       <header className="bg-[#636667] h-14">
         <nav className="flex flex-row">
-          <a href="/" title="Home" className="flex items-stretch">
+          <a href="/" title="Home" className="flex items-stretch !no-underline">
             <div className="bg-[#BF2B45] flex items-center justify-center w-14 h-14">
               <Logo className="w-8 h-8" />
             </div>
@@ -58,15 +78,32 @@ function Config() {
       {/* Main content */}
       <div className="mx-[112px] mt-8 mb-24">
         <div>
-          <h2 className="font-bold text-[26px] pt-1 pb-4 border-b my-1">
+          <h2 className="font-bold text-[26px] pt-1 pb-3 border-b my-3">
             Configure your Display
           </h2>
+        </div>
+
+        <div className="bg-[#f6f6f7] px-4 py-3 flex justify-between items-center rounded border border-[#e3e3e3]">
+          <div className="overflow-hidden text-ellipsis grow">
+            Already have a link you want to update?
+          </div>
+          <Button
+            type="secondary"
+            className="ml-2"
+            onClick={() => setIsImportDialogOpen(true)}
+          >
+            Import it here
+          </Button>
         </div>
 
         <div className="flex gap-8">
           {/* Left side */}
           <div className="grow basis-0">
-            <StepSection number="1" header="Get 311 API key">
+            <StepSection
+              number="1"
+              header="Get 311 API key"
+              isDisabled={lastValidStepNumber < 1}
+            >
               <p>
                 Request a free new 311 API token from the link below, then paste
                 it here.
@@ -84,11 +121,23 @@ function Config() {
                 type="text"
                 placeholder="e.g. 8318cb6e-ecc7-4d45-b771-42d432af3555"
                 value={apiKey}
-                onChange={(e) => setApiKey(e.target.value)}
+                required
+                minLength={36}
+                maxLength={36}
+                pattern="[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}"
+                showPasteButton
+                onChange={(e) => {
+                  setIsApiKeyValid(e.target.validity.valid);
+                  setApiKey(e.target.value);
+                }}
               />
             </StepSection>
 
-            <StepSection number="2" header="Select your stop">
+            <StepSection
+              number="2"
+              header="Select your stop"
+              isDisabled={lastValidStepNumber < 2}
+            >
               <p>
                 Use the link below to find your five-digit stop ID number, then
                 paste it here.
@@ -106,7 +155,15 @@ function Config() {
                 type="text"
                 placeholder="e.g. 12345"
                 value={stopId}
-                onChange={(e) => setStopId(e.target.value)}
+                minLength={5}
+                maxLength={5}
+                required
+                pattern="\d{5,5}"
+                showPasteButton
+                onChange={(e) => {
+                  setIsStopIdValid(e.target.validity.valid);
+                  setStopId(e.target.value);
+                }}
               />
             </StepSection>
 
@@ -119,19 +176,18 @@ function Config() {
             </h3>
           </div> */}
 
-            <StepSection number="3" header="Get your URL">
-              <Input type="text" value={resultURL} readOnly={true} />
-              <div className="flex gap-2">
-                <Button
-                  isPrimary
-                  onClick={() => navigator.clipboard.writeText(resultURL)}
-                >
-                  Copy
-                </Button>
-                <Button onClick={() => window.open(resultURL, "_blank")}>
-                  Preview
-                </Button>
-              </div>
+            <StepSection
+              number="3"
+              header="Get your URL"
+              isDisabled={lastValidStepNumber < 3}
+            >
+              <TextArea
+                value={resultURL}
+                readOnly={true}
+                className="resize-none"
+                rows={3}
+                showCopyButton
+              />
             </StepSection>
           </div>
 
@@ -152,7 +208,7 @@ function Config() {
                     style={previewIframeStyles}
                   ></iframe>
                 </div>
-                <figcaption className="text-[#636667] text-center">
+                <figcaption className="text-[#636667] text-center mt-1">
                   Preview
                 </figcaption>
               </figure>
@@ -162,6 +218,19 @@ function Config() {
       </div>
 
       <footer className="bg-gradient-to-b from-[#484848] to-[#2E2E2E] pt-10 pb-8"></footer>
+
+      <URLImportDialog
+        open={isImportDialogOpen}
+        onClose={() => {
+          setIsImportDialogOpen(false);
+        }}
+        onImport={(url) => {
+          setIsImportDialogOpen(false);
+          const { apiKey, stopId } = parseURLToParams(url);
+          setApiKey(apiKey ?? "");
+          setStopId(stopId ?? "");
+        }}
+      />
     </>
   );
 }
