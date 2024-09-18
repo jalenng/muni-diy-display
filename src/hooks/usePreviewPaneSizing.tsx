@@ -34,20 +34,20 @@ export function usePreviewPaneSizing(
     const heightByWidth = previewAreaSize.width / aspectRatio;
 
     // limited by width
-    if (heightByWidth <= previewAreaSize.height) {
-      return {
-        width: previewAreaSize.width,
-        height: heightByWidth,
-      };
-    }
-    // limited by height
-    else {
-      const widthByHeight = previewAreaSize.height * aspectRatio;
-      return {
-        width: widthByHeight,
-        height: previewAreaSize.height,
-      };
-    }
+    // if (heightByWidth <= previewAreaSize.height) {
+    return {
+      width: previewAreaSize.width,
+      height: heightByWidth,
+    };
+    // }
+    // // limited by height
+    // else {
+    //   const widthByHeight = previewAreaSize.height * aspectRatio;
+    //   return {
+    //     width: widthByHeight,
+    //     height: previewAreaSize.height,
+    //   };
+    // }
   }, [previewAreaSize]);
 
   const previewIframeStyles = useMemo(() => {

@@ -6,6 +6,11 @@ import Button from "../components/Config/Button";
 import { usePreviewPaneSizing } from "../hooks/usePreviewPaneSizing";
 import TextArea from "../components/Config/TextArea";
 import URLImportDialog from "../components/Config/URLImportDialog";
+import BannerImgSrc from "../assets/banner.jpg";
+
+const API_KEY_REGEX =
+  /^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$/;
+const STOP_ID_REGEX = /^\d{5,5}$/;
 
 function Config() {
   const [apiKey, setApiKey] = useState("");
@@ -38,6 +43,11 @@ function Config() {
       : testVals.length;
   }, [isApiKeyValid, isStopIdValid]);
 
+  const previewURL = useMemo(
+    () => (lastValidStepNumber > 2 ? resultURL : ""),
+    [lastValidStepNumber, resultURL]
+  );
+
   const parseURLToParams = (url: string) => {
     const hashRoute = new URL(url).hash;
     const [_, queryString] = hashRoute.split("?");
@@ -46,13 +56,13 @@ function Config() {
 
   return (
     <>
-      <header className="bg-[#636667] h-14">
+      <header className="bg-[#636667]">
         <nav className="flex flex-row">
           <a href="/" title="Home" className="flex items-stretch !no-underline">
-            <div className="bg-[#BF2B45] flex items-center justify-center w-14 h-14">
-              <Logo className="w-8 h-8" />
+            <div className="bg-[#BF2B45] flex items-center justify-center h-full aspect-square p-2">
+              <Logo className="w-6 h-6 sm:w-8 sm:h-8" />
             </div>
-            <div className="flex items-center text-white text-[22px] px-4 font-bold bg-[#525657]">
+            <div className="flex items-center text-white text-[16px] px-4 font-bold bg-[#525657] sm:text-[22px]">
               Muni DIY Display
               <span className="uppercase text-[16px] font-bold bg-[#BF2B45] px-2 py-0 rounded-full ml-2">
                 Beta
@@ -63,20 +73,22 @@ function Config() {
       </header>
 
       {/* Banner */}
-      <div className="aspect-[1280/426] px-12 flex items-center bg-[#D5D5D6]">
-        <h1
-          className="font-bold text-[42px] text-white leading-[133%] max-w-[600px]"
-          style={{
-            textShadow:
-              "0px 4px 4px rgba(0, 0, 0, 0.25), -3px 3px 6px rgba(0, 0, 0, 0.6), 3px -3px 6px rgba(0, 0, 0, 0.56), -3px -3px 6px rgba(0, 0, 0, 0.6)",
-          }}
-        >
-          Create your own Muni predictions and alerts display!
-        </h1>
+      <div className="relative overflow-hidden">
+        {/* Image */}
+        <img
+          className="aspect-[1280/426] object-cover bg-[#D5D5D6] w-full h-full"
+          src={BannerImgSrc}
+        ></img>
+        {/* Text container */}
+        <div className="bg-[#7A7B7E] pl-1 pr-11 sm:absolute sm:left-0 sm:right-0 sm:top-0 sm:bg-transparent sm:top-[40%] sm:bottom-auto sm:p-0">
+          <h1 className="font-bold text-white leading-[133%] max-w-[600px] p-2.5 text-[20px] sm:px-12 sm:text-[42px] sm:-translate-y-[40%] sm:text-shadow-title">
+            Create your own Muni predictions and alerts display!
+          </h1>
+        </div>
       </div>
 
       {/* Main content */}
-      <div className="mx-[112px] mt-8 mb-24">
+      <div className="mx-[32px] mt-8 mb-24 sm:mx-[112px]">
         <div>
           <h2 className="font-bold text-[26px] pt-1 pb-3 border-b my-3">
             Configure your Display
@@ -96,7 +108,7 @@ function Config() {
           </Button>
         </div>
 
-        <div className="flex gap-8">
+        <div className="flex gap-8 flex-col items-stretch md:flex-row">
           {/* Left side */}
           <div className="grow basis-0">
             <StepSection
@@ -124,7 +136,7 @@ function Config() {
                 required
                 minLength={36}
                 maxLength={36}
-                pattern="[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}"
+                pattern={API_KEY_REGEX.source}
                 showPasteButton
                 onChange={(e) => {
                   setIsApiKeyValid(e.target.validity.valid);
@@ -158,7 +170,7 @@ function Config() {
                 minLength={5}
                 maxLength={5}
                 required
-                pattern="\d{5,5}"
+                pattern={STOP_ID_REGEX.source}
                 showPasteButton
                 onChange={(e) => {
                   setIsStopIdValid(e.target.validity.valid);
@@ -194,17 +206,17 @@ function Config() {
           {/* Right side: preview */}
           <div
             ref={previewContainerRef}
-            className="grow basis-0 flex justify-center w-[40%]"
+            className="grow basis-0 flex justify-center md:w-[40%]"
           >
-            <div className="flex items-center sticky top-0 max-h-screen">
+            <div className="flex items-center md:sticky top-0 max-h-screen">
               <figure>
                 <div
                   className="border border-[#d5d5d6]"
                   style={previewIframeWrapperStyles}
                 >
                   <iframe
-                    key={resultURL}
-                    src={resultURL}
+                    key={previewURL}
+                    src={previewURL}
                     style={previewIframeStyles}
                   ></iframe>
                 </div>
@@ -228,7 +240,9 @@ function Config() {
           setIsImportDialogOpen(false);
           const { apiKey, stopId } = parseURLToParams(url);
           setApiKey(apiKey ?? "");
+          setIsApiKeyValid(API_KEY_REGEX.test(apiKey));
           setStopId(stopId ?? "");
+          setIsStopIdValid(STOP_ID_REGEX.test(stopId));
         }}
       />
     </>
